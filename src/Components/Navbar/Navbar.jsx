@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import DetailsOverview from '../DetailsOverview/DetailsOverview';
 
 // Placeholder Components for demonstration
 const MFDetails = () => <div className="p-8 mt-24 text-center">Mutual Fund Details Content</div>;
@@ -22,14 +23,13 @@ function Navbar() {
       case 'Benefits': return <Benefits />;
       case 'User Details': return <UserDetails />;
       case 'Investment Apps': return <InvestmentApps />;
-      default: return <div className="p-8 mt-24 text-center">Welcome Home</div>;
     }
   };
 
   return (
     <>
       <div className="fixed w-full z-20 top-4 px-4">
-        <nav className="max-w-screen-xl mx-auto p-4 small-box-shadow rounded-2xl">
+        <nav className="max-w-screen-xl mx-auto p-3.5 small-box-shadow rounded-2xl">
           <div className="flex flex-wrap items-center justify-between mx-auto px-4">
             
             {/* Logo */}
