@@ -1,8 +1,42 @@
-# React + Vite
+📈 SIPVision: Smart Investment Goal Planner</br>
+SIPVision is an intuitive tool designed to help investors visualize their wealth creation journey. It provides deep insights into Systematic Investment Plans (SIPs) by factoring in inflation, real returns, and dynamic "what-if" scenarios. 💸✨</br>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 View Live Demo (After Completetion)</br>
 
-Currently, two official plugins are available:
+-------</br>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+📸 Visual Insights & Screenshots</br>
+
+<img width="1917" height="1028" alt="image" src="https://github.com/user-attachments/assets/6a7a47ce-96d9-4d95-ba78-889a60a102e1" /></br>
+
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/dc471067-07ed-4eee-8840-8dff66f8a424" /></br>
+
+-------</br>
+
+🛠️ Setup Instructions</br>
+Follow these steps to run SIPVision locally:</br>
+
+1. Clone the Repository:</br>
+  git clone https://github.com/Codomania-Legends/SIPVision.git</br>
+  cd SIPVision</br>
+2. Install Dependencies:</br>
+    npm install</br>
+4. Run Development Server:</br>
+   npm run dev</br>
+6. Build for Production:</br>
+   npm run build</br>
+
+-------</br>
+
+🧪 Tech Stack</br>
+Frontend: React.js + Vite ⚡</br>
+
+Styling: Tailwind CSS / Bootstrap 🎨</br>
+
+Charts: Chart.js / Recharts 📊</br>
+
+Animations: GSAP / Framer Motion ✨</br>
+
+PDF Generation: jsPDF / html2canvas 📄</br>
+
+-------</br>

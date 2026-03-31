@@ -8,7 +8,7 @@ import Navbar from './Components/Navbar/Navbar'
 import { DetailsProvider, useDetails } from './Utilities/DetailsContext'
 import Form from './Components/Form/Form'
 import MFDetails from './Components/MFDetails/MFDetails'
-import Benefits from './Components/Benefits/Benefits'
+import Services from './Components/Benefits/Services'
 import UserDetails from './Components/UserDetails/UserDetails'
 import InvestmentApps from './Components/InvestmentApp/InvestmentApps'
 import { Toaster } from "sileo"
@@ -43,7 +43,7 @@ createRoot(document.getElementById('root')).render(
                     <Route path="/" element={<Form />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/mfdetails" element={<MFDetails />} />
-                    <Route path="/benefits" element={<Benefits />} />
+                    <Route path="/services" element={<Services />} />
                     <Route path="/user-details" element={<UserDetails />} />
                     <Route path="/investment-apps" element={<InvestmentApps />} />
                 </Routes>
