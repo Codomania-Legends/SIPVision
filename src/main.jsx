@@ -4,12 +4,17 @@ import './index.css'
 import { BrowserRouter, Routes, Route } from 'react-router'
 import Home from './Components/Home/Home'
 import Navbar from './Components/Navbar/Navbar'
+import { DetailsProvider } from './Utilities/DetailsContext'
+import Form from './Components/Form/Form'
 
 createRoot(document.getElementById('root')).render(
     <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/navbar" element={<Navbar />} />
-        </Routes>
+        <DetailsProvider>
+            <Navbar />
+            <Routes>
+                <Route path="/" element={<Form />} />
+                <Route path="/home" element={<Home />} />
+            </Routes>
+        </DetailsProvider>
     </BrowserRouter>
 )

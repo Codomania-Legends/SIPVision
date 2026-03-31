@@ -1,8 +1,11 @@
 import React from 'react'
+import DetailsOverview from '../DetailsOverview/DetailsOverview'
 
 function Home() {
   return (
-    <div>Home</div>
+    <div className='h-[90vh] w-screen flex justify-center items-center'>
+        <DetailsOverview />
+    </div>
   )
 }
 
