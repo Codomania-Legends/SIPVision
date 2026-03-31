@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const navigate = useNavigate();
+  const location = useLocation()
+
+  useEffect( () => {
+    setActiveTab(location.pathname)
+    console.log(location.pathname)
+  } , [location.pathname] )
 
   // Style snippets
   const clayInactive = "text-slate-600 hover:bg-slate-100/50 hover:shadow-[inset_2px_2px_4px_rgba(0,0,0,0.05)]";
@@ -12,7 +18,7 @@ function Navbar() {
 
   return (
     <div className="fixed w-full  z-20 top-4 px-4">
-      <nav className="max-w-screen-xl mx-auto p-3.5 bg-white/90 backdrop-blur-md small-box-shadow rounded-2xl">
+      <nav className="max-w-7xl mx-auto p-3.5 bg-white/90 backdrop-blur-md small-box-shadow rounded-2xl">
         <div className="flex flex-wrap items-center justify-between mx-auto px-4">
           
           {/* Logo Section */}
@@ -49,11 +55,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('Home');
+                    setActiveTab('/home');
                     setIsOpen(false);
                     navigate('/home');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'Home' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/home' ? clayActive : clayInactive}`}
                 >
                   Home
                 </button>
@@ -63,11 +69,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('MF Details');
+                    setActiveTab('/mfdetails');
                     setIsOpen(false);
                     navigate('/mfdetails');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'MF Details' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/mfdetails' ? clayActive : clayInactive}`}
                 >
                   MF Details
                 </button>
@@ -77,11 +83,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('Benefits');
+                    setActiveTab('/benefits');
                     setIsOpen(false);
                     navigate('/services');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'Benefits' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/benefits' ? clayActive : clayInactive}`}
                 >
                   Services
                 </button>
@@ -91,11 +97,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('User Details');
+                    setActiveTab('/user-details');
                     setIsOpen(false);
                     navigate('/user-details');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'User Details' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/user-details' ? clayActive : clayInactive}`}
                 >
                   User Details
                 </button>
@@ -105,11 +111,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('Investment Apps');
+                    setActiveTab('/investment-apps');
                     setIsOpen(false);
                     navigate('/investment-apps');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'Investment Apps' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/investment-apps' ? clayActive : clayInactive}`}
                 >
                   Investment Apps
                 </button>
