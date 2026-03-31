@@ -60,24 +60,6 @@ SIPVision is an intuitive tool designed to help investors visualize their wealth
 - **State Management:** React Hooks (useState, useEffect)
 - **Deployment:** Vercel / Netlify
 
----
-
-## 📸 Sneak Peek
-
-<div align="center">
-  <table>
-    <tr>
-      <td align="center"><b>Dashboard</b></td>
-      <td align="center"><b>Growth Projection</b></td>
-    </tr>
-    <tr>
-      <td><img src="https://via.placeholder.com/400x250.png?text=Dashboard+UI" alt="Dashboard" width="400"></td>
-      <td><img src="https://via.placeholder.com/400x250.png?text=Wealth+Charts" alt="Charts" width="400"></td>
-    </tr>
-  </table>
-  <br/>
-  <i>(Pro tip: Replace these with actual screenshots of your SIPVision UI!)</i>
-</div>
 
 ---
 
