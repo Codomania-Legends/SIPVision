@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const DetailsContext = createContext();
 
 export const DetailsProvider = ({ children }) => {
-    
+    const [story, setStory] = useState("");
     const [sipData, setSipData] = useState(() => {
         const savedData = localStorage.getItem('sipVisionData');
         
@@ -26,7 +26,7 @@ export const DetailsProvider = ({ children }) => {
     }, [sipData]);
 
     return (
-        <DetailsContext.Provider value={{ sipData, setSipData }}>
+        <DetailsContext.Provider value={{ sipData, setSipData, story, setStory }}>
             {children}
         </DetailsContext.Provider>
     );

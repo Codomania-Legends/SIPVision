@@ -12,31 +12,29 @@ import {
     Legend,
 } from 'recharts';
 import { useDetails } from './DetailsContext'; 
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router'; // ⚠️ Note: In React Router v6, this is usually 'react-router-dom'
 
 const SipChart = () => {
     const { sipData } = useDetails();
-
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
     const [boostSip, setBoostSip] = useState(0);
     const [boostTime, setBoostTime] = useState(0);
     const [boostReturn, setBoostReturn] = useState(0);
-    const [showLine , setShowLine] = useState(false);
+    const [showLine, setShowLine] = useState(false);
 
-    useEffect( () => {
-        if(boostSip > 0 || boostTime > 0 || boostReturn > 0){
+    useEffect(() => {
+        if (boostSip > 0 || boostTime > 0 || boostReturn > 0) {
             setShowLine(true);
-        }
-        else{
+        } else {
             setShowLine(false);
         }
-    } , [boostSip, boostTime, boostReturn] )
+    }, [boostSip, boostTime, boostReturn]);
 
     const chartData = useMemo(() => {
-        const baseSip = Number(sipData.monthlyAmount) || 5000; 
-        const baseYears = Number(sipData.timeHorizon) || 10;   
-        const baseReturn = Number(sipData.expectedReturn) || 12; 
+        const baseSip = Number(sipData.monthlyAmount) || 0; 
+        const baseYears = Number(sipData.timeHorizon) || 0;   
+        const baseReturn = Number(sipData.expectedReturn) || 0; 
         const initialSavings = Number(sipData.currentSavings) || 0;
 
         const optSip = baseSip + boostSip;
@@ -86,37 +84,71 @@ const SipChart = () => {
 
     return (
         <div className="w-full h-8/10 flex flex-col items-center bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative">
-            <div className="w-full bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6">
-                <div className="flex justify-between items-center mb-3">
-                <h4 className="text-sm font-bold text-blue-900 flex items-center gap-2">
-                    🚀 "What If?" Scenario Builder
-                </h4>
-                {(boostSip > 0 || boostTime > 0 || boostReturn > 0) && (
-                    <button onClick={resetBoosts} className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors">
-                    Reset Filters ✖️
-                    </button>
-                )}
+            
+            {/* 🎛️ What If Scenario Builder - Now with Sliders! */}
+            <div className="w-full bg-blue-50/50 p-5 rounded-xl border border-blue-100 mb-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-base font-bold text-blue-900 flex items-center gap-2">
+                        🚀 "What If?" Scenario Builder
+                    </h4>
+                    {(boostSip > 0 || boostTime > 0 || boostReturn > 0) && (
+                        <button onClick={resetBoosts} className="text-xs bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-700 font-medium py-1 px-3 rounded-lg transition-colors shadow-sm">
+                            Reset Filters ✖️
+                        </button>
+                    )}
                 </div>
                 
-                <div className="flex flex-wrap gap-3">
-                <button 
-                    onClick={() => setBoostSip(prev => prev + 1000)}
-                    className="flex-1 bg-white border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all shadow-sm"
-                >
-                    + ₹1,000 / mo
-                </button>
-                <button 
-                    onClick={() => setBoostTime(prev => prev + 2)}
-                    className="flex-1 bg-white border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all shadow-sm"
-                >
-                    + 2 Years
-                </button>
-                <button 
-                    onClick={() => setBoostReturn(prev => prev + 2)}
-                    className="flex-1 bg-white border border-blue-200 text-blue-700 hover:bg-blue-600 hover:text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all shadow-sm"
-                >
-                    + 2% Return
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* 💰 SIP Boost Slider */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
+                            <span>Extra SIP 💰</span>
+                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ ₹{boostSip.toLocaleString('en-IN')}</span>
+                        </label>
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="20000" 
+                            step="500" 
+                            value={boostSip} 
+                            onChange={(e) => setBoostSip(Number(e.target.value))}
+                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                    </div>
+
+                    {/* ⏳ Time Boost Slider */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
+                            <span>Extra Time ⏳</span>
+                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ {boostTime} Yrs</span>
+                        </label>
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="15" 
+                            step="1" 
+                            value={boostTime} 
+                            onChange={(e) => setBoostTime(Number(e.target.value))}
+                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                    </div>
+
+                    {/* 📈 Return Boost Slider */}
+                    <div className="flex flex-col gap-2">
+                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
+                            <span>Extra Return 📈</span>
+                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ {boostReturn}%</span>
+                        </label>
+                        <input 
+                            type="range" 
+                            min="0" 
+                            max="10" 
+                            step="0.5" 
+                            value={boostReturn} 
+                            onChange={(e) => setBoostReturn(Number(e.target.value))}
+                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -139,13 +171,13 @@ const SipChart = () => {
                     />
                     <Legend wrapperStyle={{ paddingTop: '20px' }}/>
                     
-                    {/* 1st Line: The base invested amount (Safe Money) */}
+                    {/* 🛡️ 1st Line: The base invested amount (Safe Money) */}
                     <Bar dataKey="Invested" barSize={30} fill="#93c5fd" radius={[4, 4, 0, 0]} name="Base Invested" />
                     
-                    {/* 2nd Line: The base total wealth (Current Plan) */}
+                    {/* 📊 2nd Line: The base total wealth (Current Plan) */}
                     <Area type="monotone" dataKey="TotalWealth" fill="#dbeafe" stroke="#3b82f6" strokeWidth={3} name="Base Wealth" />
                     
-                    {/* 3rd Line: THE FOMO LINE! (Optimized Potential) 💸 */}
+                    {/* 💸 3rd Line: THE FOMO LINE! (Optimized Potential) */}
                     {showLine && <Line 
                         type="monotone" 
                         dataKey="OptimizedWealth" 
