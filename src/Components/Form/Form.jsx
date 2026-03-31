@@ -30,8 +30,8 @@ function Form() {
             sileo.info({ title: "Big moves! 💸", description: "Let's plan the strategy." });
         } else if (step === 2) {
             if (!sipData.monthlyAmount || !sipData.timeHorizon || !sipData.expectedReturn) {
-                 sileo.error({ title: "Missing Details! 📊", description: "Please fill in all the fields." });
-                 return; 
+                sileo.error({ title: "Missing Details! 📊", description: "Please fill in all the fields." });
+                return; 
             }
             sileo.success({ title: "Almost there! 🏁", description: "Ready for takeoff." });
         }

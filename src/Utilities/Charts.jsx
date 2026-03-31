@@ -12,7 +12,8 @@ import {
     Legend,
 } from 'recharts';
 import { useDetails } from './DetailsContext'; 
-import { Link, useNavigate } from 'react-router'; // ⚠️ Note: In React Router v6, this is usually 'react-router-dom'
+import { Link, useNavigate } from 'react-router'; 
+import SummaryDownloader from '../Utilities/Summary';
 
 const SipChart = () => {
     const { sipData } = useDetails();
@@ -192,6 +193,11 @@ const SipChart = () => {
                 </ResponsiveContainer>
             <button onClick={() => navigate("/user-details")} className='bg-blue-500 absolute right-0 bottom-0 text-white px-4 py-2 rounded-lg small-box-shadow'>Your Details</button>
             </div>
+
+            <div className="flex justify-center mt-6">
+                <SummaryDownloader />
+            </div>
+
         </div>
     );
 };
