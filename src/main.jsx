@@ -12,6 +12,8 @@ import Services from './Components/Benefits/Services'
 import UserDetails from './Components/UserDetails/UserDetails'
 import InvestmentApps from './Components/InvestmentApp/InvestmentApps'
 import { Toaster } from "sileo"
+import AI from './Utilities/AI'
+import SIPVisionDeck from './Components/MFDetails/MFDetails'
 
 const Layout = ({children}) => {
     const {story} = useDetails()
@@ -19,7 +21,6 @@ const Layout = ({children}) => {
         <>
             <Navbar />
             {children}
-            {story && <p>{story}</p>}
         </>
     )
 }
@@ -40,9 +41,10 @@ createRoot(document.getElementById('root')).render(
             />
             <Layout>
                 <Routes>
+                    <Route path="/ai" element={<AI />} />
                     <Route path="/" element={<Form />} />
                     <Route path="/home" element={<Home />} />
-                    <Route path="/mfdetails" element={<MFDetails />} />
+                    <Route path="/mfdetails" element={<SIPVisionDeck />} />
                     <Route path="/services" element={<Services />} />
                     <Route path="/user-details" element={<UserDetails />} />
                     <Route path="/investment-apps" element={<InvestmentApps />} />

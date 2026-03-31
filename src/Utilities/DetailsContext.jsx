@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const DetailsContext = createContext();
 
 export const DetailsProvider = ({ children }) => {
-    const [story, setStory] = useState("");
+    const [story, setStory] = useState(null);
     const [sipData, setSipData] = useState(() => {
         const savedData = localStorage.getItem('sipVisionData');
         

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowLeft, TrendingUp, ShieldCheck, Sparkles, PieChart, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, TrendingUp, ShieldCheck, Sparkles, PieChart, CheckCircle, Bot } from 'lucide-react';
+import { sileo } from 'sileo'; // ✨ Imported Sileo!
+import AI from '../../Utilities/AI';
 
 // 📚 High-Quality, Bite-Sized Learning Content
 const LEARNING_CARDS = [
@@ -64,7 +66,7 @@ const LEARNING_CARDS = [
 
 const SIPVisionDeck = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(1); // 1 for next, -1 for prev
+  const [direction, setDirection] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
 
   const nextCard = () => {
@@ -73,6 +75,7 @@ const SIPVisionDeck = () => {
       setCurrentIndex(prev => prev + 1);
     } else {
       setIsCompleted(true);
+      sileo.success({ title: "Deck Completed! 🎉", description: "You are now an SIP Master." });
     }
   };
 
@@ -89,7 +92,26 @@ const SIPVisionDeck = () => {
     setIsCompleted(false);
   };
 
-  // Framer Motion animation variants for sliding cards
+  // ✨ Sileo AI Insight Trigger!
+  // ✨ Sileo AI Insight Trigger!
+  const triggerAIInsight = (questionName) => {
+    sileo.promise(AI(questionName), {
+      loading: { 
+        title: "AI is Thinking... 🤖", 
+        description: `Generating insights for: ${questionName}` 
+      },
+      // 👇 Catch the resolved data here so it displays the actual text!
+      success: (data) => ({ 
+        title: "AI Insight Ready! ✨", 
+        description: data 
+      }),
+      error: { 
+        title: "AI Overloaded ⚠️", 
+        description: "Could not generate insight right now." 
+      }
+    });
+  };
+
   const slideVariants = {
     enter: (direction) => ({
       x: direction > 0 ? 100 : -100,
@@ -115,7 +137,6 @@ const SIPVisionDeck = () => {
   return (
     <div className="max-w-xl mx-auto p-4 md:p-8 min-h-[85vh] flex flex-col justify-center font-sans bg-slate-50">
       
-      {/* Title & Progress Bar */}
       {!isCompleted && (
         <div className="mb-8">
           <h1 className="text-2xl font-extrabold text-slate-800 text-center mb-6">
@@ -138,7 +159,6 @@ const SIPVisionDeck = () => {
         </div>
       )}
 
-      {/* Cards Container */}
       <div className="relative w-full aspect-[4/5] max-h-[600px] perspective-1000">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           
@@ -152,20 +172,29 @@ const SIPVisionDeck = () => {
               exit="exit"
               className={`absolute inset-0 w-full h-full bg-gradient-to-br ${LEARNING_CARDS[currentIndex].gradient} rounded-3xl shadow-xl border ${LEARNING_CARDS[currentIndex].border} p-6 md:p-8 flex flex-col`}
             >
-              {/* Card Header */}
-              <div className="flex flex-col items-center text-center mb-6">
+              {/* ✨ AI Spark Button right above the header! */}
+              <div className="absolute top-6 right-6">
+                <button 
+                  onClick={() => triggerAIInsight(LEARNING_CARDS[currentIndex].subtitle)}
+                  className="p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-sm hover:shadow-md transition-all text-blue-600 hover:text-blue-700 hover:scale-110 active:scale-95 flex items-center justify-center group"
+                  title="Ask AI"
+                >
+                  <Bot className="w-5 h-5 group-hover:animate-pulse" />
+                </button>
+              </div>
+
+              <div className="flex flex-col items-center text-center mb-6 mt-4">
                 <div className="p-4 bg-white rounded-2xl shadow-sm mb-4">
                   {LEARNING_CARDS[currentIndex].icon}
                 </div>
                 <h3 className="text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
                   {LEARNING_CARDS[currentIndex].subtitle}
                 </h3>
-                <h2 className="text-3xl font-black text-slate-800 leading-tight">
+                <h2 className="text-3xl font-black text-slate-800 leading-tight px-4">
                   {LEARNING_CARDS[currentIndex].title}
                 </h2>
               </div>
 
-              {/* Card Body */}
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
                 {LEARNING_CARDS[currentIndex].content.map((paragraph, idx) => (
                   <p key={idx} className="text-slate-700 text-lg leading-relaxed font-medium">
@@ -174,7 +203,6 @@ const SIPVisionDeck = () => {
                 ))}
               </div>
 
-              {/* Highlight Box */}
               <div className="mt-6 bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
                 <p className="text-slate-800 font-bold text-sm md:text-base">
                   {LEARNING_CARDS[currentIndex].highlight}
@@ -183,7 +211,6 @@ const SIPVisionDeck = () => {
             </motion.div>
           ) : (
             
-            /* Completion Screen */
             <motion.div
               key="complete"
               initial={{ opacity: 0, scale: 0.8 }}
@@ -197,7 +224,7 @@ const SIPVisionDeck = () => {
                 You now understand the core secrets of wealth building. It is time to start your SIP journey.
               </p>
               <button 
-                onClick={() => alert("Navigate to Investment Setup!")} // Replace with your navigation logic
+                onClick={() => alert("Navigate to Investment Setup!")} 
                 className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/30 mb-4"
               >
                 Start Investing Now
@@ -214,7 +241,6 @@ const SIPVisionDeck = () => {
         </AnimatePresence>
       </div>
 
-      {/* Navigation Controls */}
       {!isCompleted && (
         <div className="flex items-center justify-between mt-8 gap-4">
           <button
@@ -239,7 +265,6 @@ const SIPVisionDeck = () => {
         </div>
       )}
 
-      {/* Basic Custom Scrollbar CSS for the internal scroll if needed */}
       <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
