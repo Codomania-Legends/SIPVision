@@ -11,6 +11,10 @@ SIPVision is an intuitive tool designed to help investors visualize their wealth
 
 <img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/dc471067-07ed-4eee-8840-8dff66f8a424" /></br>
 
+Mutual Funds and SIP Details
+<img width="1919" height="1023" alt="image" src="https://github.com/user-attachments/assets/ac787aaf-ceec-4f2f-a0bf-d7f15a7534ff" />
+
+
 -------</br>
 
 🛠️ Setup Instructions</br>
