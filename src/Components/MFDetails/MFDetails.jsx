@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, TrendingUp, ShieldCheck, Sparkles, PieChart, CheckCircle, Bot } from 'lucide-react';
-import { sileo } from 'sileo'; // ✨ Imported Sileo!
+import { sileo } from 'sileo';
 import AI from '../../Utilities/AI';
 
-// 📚 High-Quality, Bite-Sized Learning Content
 const LEARNING_CARDS = [
   {
     id: "mutual-fund",
@@ -92,76 +91,41 @@ const SIPVisionDeck = () => {
     setIsCompleted(false);
   };
 
-  // ✨ Sileo AI Insight Trigger!
-  // ✨ Sileo AI Insight Trigger!
   const triggerAIInsight = (questionName) => {
     sileo.promise(AI(questionName), {
-      loading: { 
-        title: "AI is Thinking... 🤖", 
-        description: `Generating insights for: ${questionName}` 
-      },
-      // 👇 Catch the resolved data here so it displays the actual text!
-      success: (data) => ({ 
-        title: "AI Insight Ready! ✨", 
-        description: data 
-      }),
-      error: { 
-        title: "AI Overloaded ⚠️", 
-        description: "Could not generate insight right now." 
-      }
+      loading: { title: "AI is Thinking... 🤖", description: `Generating insights for: ${questionName}` },
+      success: (data) => ({ title: "AI Insight Ready! ✨", description: data }),
+      error: { title: "AI Overloaded ⚠️", description: "Could not generate insight right now." }
     });
   };
 
   const slideVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 100 : -100,
-      opacity: 0,
-      scale: 0.95,
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 25 }
-    },
-    exit: (direction) => ({
-      zIndex: 0,
-      x: direction < 0 ? 100 : -100,
-      opacity: 0,
-      scale: 0.95,
-      transition: { duration: 0.3 }
-    })
+    enter: (direction) => ({ x: direction > 0 ? 100 : -100, opacity: 0, scale: 0.95 }),
+    center: { zIndex: 1, x: 0, opacity: 1, scale: 1, transition: { duration: 0.4, type: "spring", stiffness: 300, damping: 25 } },
+    exit: (direction) => ({ zIndex: 0, x: direction < 0 ? 100 : -100, opacity: 0, scale: 0.95, transition: { duration: 0.3 } })
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 md:p-8 min-h-[85vh] flex flex-col justify-center font-sans bg-slate-50">
-      
+    <div className="max-w-4xl mx-auto flex flex-col min-h-screen justify-center font-sans bg-slate-50">
+
       {!isCompleted && (
-        <div className="mb-8">
-          <h1 className="text-2xl font-extrabold text-slate-800 text-center mb-6">
-            SIP Knowledge Deck 📚
-          </h1>
-          <div className="flex justify-center gap-2">
+        <div className="mt-25">
+          <h1 className="text-3xl font-extrabold text-slate-800 text-center mb-6">SIP Knowledge Deck 📚</h1>
+          <div className="flex justify-center mb-4 gap-2">
             {LEARNING_CARDS.map((_, idx) => (
-              <div 
-                key={idx} 
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  idx === currentIndex 
-                    ? 'w-8 bg-blue-600' 
-                    : idx < currentIndex 
-                      ? 'w-4 bg-blue-300' 
-                      : 'w-4 bg-slate-200'
-                }`}
+              <div
+                key={idx}
+                className={`h-2 rounded-full transition-all duration-500 ${idx === currentIndex ? 'w-8 bg-blue-600' : idx < currentIndex ? 'w-4 bg-blue-300' : 'w-4 bg-slate-200'
+                  }`}
               />
             ))}
           </div>
         </div>
       )}
 
-      <div className="relative w-full aspect-[4/5] max-h-[600px] perspective-1000">
+      {/* 🛠️ FIXED: Removed aspect-[4/5] and h-[500px], replaced with min-height and flex-col */}
+      <div className="relative w-full min-h-[500px] flex flex-col perspective-1000">
         <AnimatePresence initial={false} custom={direction} mode="wait">
-          
           {!isCompleted ? (
             <motion.div
               key={currentIndex}
@@ -170,32 +134,33 @@ const SIPVisionDeck = () => {
               initial="enter"
               animate="center"
               exit="exit"
-              className={`absolute inset-0 w-full h-full bg-gradient-to-br ${LEARNING_CARDS[currentIndex].gradient} rounded-3xl shadow-xl border ${LEARNING_CARDS[currentIndex].border} p-6 md:p-8 flex flex-col`}
+              className={`absolute medium-box-shadow inset-0 w-full h-[500px] bg-gradient-to-br ${LEARNING_CARDS[currentIndex].gradient} rounded-3xl shadow-xl p-6 md:p-10 flex flex-col`}
             >
-              {/* ✨ AI Spark Button right above the header! */}
               <div className="absolute top-6 right-6">
-                <button 
+                <button
                   onClick={() => triggerAIInsight(LEARNING_CARDS[currentIndex].subtitle)}
-                  className="p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-sm hover:shadow-md transition-all text-blue-600 hover:text-blue-700 hover:scale-110 active:scale-95 flex items-center justify-center group"
-                  title="Ask AI"
+                  className="p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-sm hover:shadow-md transition-all text-blue-600 group"
                 >
                   <Bot className="w-5 h-5 group-hover:animate-pulse" />
                 </button>
               </div>
 
-              <div className="flex flex-col items-center text-center mb-6 mt-4">
-                <div className="p-4 bg-white rounded-2xl shadow-sm mb-4">
+              <div className="flex justify-center items-center text-center mb-6 mt-4">
+                <div className="p-4 mr-4 bg-white rounded-2xl shadow-sm mb-4">
                   {LEARNING_CARDS[currentIndex].icon}
                 </div>
-                <h3 className="text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
-                  {LEARNING_CARDS[currentIndex].subtitle}
-                </h3>
-                <h2 className="text-3xl font-black text-slate-800 leading-tight px-4">
-                  {LEARNING_CARDS[currentIndex].title}
-                </h2>
+                <div>
+                  <h3 className="text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
+                    {LEARNING_CARDS[currentIndex].subtitle}
+                  </h3>
+                  <h2 className="text-3xl font-black text-slate-800 leading-tight">
+                    {LEARNING_CARDS[currentIndex].title}
+                  </h2>
+                </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-4">
+              {/* 🛠️ FIXED: Added flex-grow and reduced bottom margin to prevent pushing content out */}
+              <div className=" overflow-y-auto custom-scrollbar space-y-4 ">
                 {LEARNING_CARDS[currentIndex].content.map((paragraph, idx) => (
                   <p key={idx} className="text-slate-700 text-lg leading-relaxed font-medium">
                     {paragraph}
@@ -203,41 +168,37 @@ const SIPVisionDeck = () => {
                 ))}
               </div>
 
-              <div className="mt-6 bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
-                <p className="text-slate-800 font-bold text-sm md:text-base">
+              {/* 🛠️ FIXED: Used mt-auto to ensure it stays at the very bottom of the card */}
+              <div className="mt-6 bg-white/60 backdrop-blur-sm p-5 rounded-xl border border-white/50 shadow-sm">
+                <p className="text-slate-900 font-bold text-sm md:text-base">
                   {LEARNING_CARDS[currentIndex].highlight}
                 </p>
               </div>
             </motion.div>
           ) : (
-            
             <motion.div
               key="complete"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", bounce: 0.5 }}
-              className="absolute inset-0 w-full h-full bg-slate-900 rounded-3xl shadow-2xl p-8 flex flex-col items-center justify-center text-center"
+              className="absolute w-full h-full bg-slate-900 rounded-3xl shadow-2xl p-8 flex flex-col items-center justify-center text-center mb-25 big-box-shadow"
             >
               <CheckCircle className="w-20 h-20 text-green-400 mb-6" />
               <h2 className="text-4xl font-black text-white mb-4">You're Ready! 🚀</h2>
               <p className="text-slate-300 text-lg mb-10 max-w-sm">
                 You now understand the core secrets of wealth building. It is time to start your SIP journey.
               </p>
-              <button 
-                onClick={() => alert("Navigate to Investment Setup!")} 
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/30 mb-4"
+              <button
+                onClick={() => alert("Navigate to Investment Setup!")}
+                className="w-full max-w-xs bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors small-box-shadow mb-4"
               >
                 Start Investing Now
               </button>
-              <button 
-                onClick={restart}
-                className="text-slate-400 font-semibold hover:text-white transition-colors"
-              >
+              <button onClick={restart} className="text-slate-400 font-semibold hover:text-white transition-colors">
                 Read Deck Again
               </button>
             </motion.div>
           )}
-
         </AnimatePresence>
       </div>
 
@@ -246,18 +207,15 @@ const SIPVisionDeck = () => {
           <button
             onClick={prevCard}
             disabled={currentIndex === 0}
-            className={`p-4 rounded-full transition-all ${
-              currentIndex === 0 
-                ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
-                : 'bg-white text-slate-800 shadow-md hover:shadow-lg hover:-translate-x-1'
-            }`}
+            className={`p-4 rounded-full small-box-shadow mb-10 transition-all ${currentIndex === 0 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-800 shadow-md hover:shadow-lg'
+              }`}
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
 
           <button
             onClick={nextCard}
-            className="flex-1 bg-slate-900 text-white font-bold py-4 px-8 rounded-full flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all hover:translate-x-1"
+            className="flex-1 small-box-shadow bg-slate-900 text-white font-bold py-4 px-8 rounded-full flex items-center justify-center gap-2 mb-10 shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all"
           >
             {currentIndex === LEARNING_CARDS.length - 1 ? 'Finish' : 'Next Concept'}
             <ArrowRight className="w-5 h-5" />
@@ -265,10 +223,11 @@ const SIPVisionDeck = () => {
         </div>
       )}
 
-      <style dangerouslySetInnerHTML={{__html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 10px; }
       `}} />
     </div>
   );

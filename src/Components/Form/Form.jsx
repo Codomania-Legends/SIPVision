@@ -95,7 +95,7 @@ function Form() {
 
     return (
         <div className="flex flex-col md:flex-row justify-center items-center h-screen w-screen bg-[#f0f4f8] p-4 overflow-hidden">
-            <div className="relative bg-white p-8 md:p-12 rounded-[40px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] max-w-lg w-full border-b-8 border-blue-200">
+            <div className="relative bg-white top-10 medium-box-shadow p-8 md:p-12 rounded-[40px] max-w-lg w-full ">
                 
                 {/* Custom Progress Bar */}
                 <div className="flex gap-3 mb-10 justify-center items-center">
@@ -142,8 +142,8 @@ function Form() {
                                                 }}
                                                 className={`p-5 rounded-[25px] border-2 text-left transition-all ${
                                                     sipData.goal === opt.value 
-                                                    ? "border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200" 
-                                                    : "border-gray-100 bg-gray-50 text-gray-600 hover:bg-white hover:border-blue-100"
+                                                    ? "small-box-shadow bg-blue-600 text-white shadow-lg shadow-blue-200 border-none" 
+                                                    : "small-box-shadow bg-gray-50 text-gray-600 hover:bg-white border-none"
                                                 }`}
                                             >
                                                 <span className="text-2xl block mb-1">{opt.label.split(' ')[1]}</span>
@@ -174,7 +174,7 @@ function Form() {
                                         whileTap={{ scale: 0.98 }}
                                         type="button" 
                                         onClick={nextStep} 
-                                        className="mt-4 bg-gray-900 text-white py-5 rounded-[25px] font-black text-xl shadow-xl"
+                                        className="mt-4 small-box-shadow bg-gray-900 text-white py-5 rounded-[25px] font-black text-xl "
                                     >
                                         Lock it in 🔒
                                     </motion.button>

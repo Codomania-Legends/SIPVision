@@ -51,6 +51,19 @@ function Navbar() {
           <div className={`${isOpen ? 'block' : 'hidden'} text-sm w-full md:block md:w-auto mt-4 md:mt-0`}>
             <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0 font-semibold">
               
+              <div className="md:w-auto w-full">
+                <button
+                  onClick={() => {
+                    setActiveTab('/');
+                    setIsOpen(false);
+                    navigate('/');
+                  }}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/' ? clayActive : clayInactive}`}
+                >
+                  Form
+                </button>
+              </div>
+
               {/* Home Item */}
               <div className="md:w-auto w-full">
                 <button
@@ -64,6 +77,7 @@ function Navbar() {
                   Home
                 </button>
               </div>
+              
 
               {/* MF Details Item */}
               <div className="md:w-auto w-full">
