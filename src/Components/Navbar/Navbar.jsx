@@ -34,10 +34,10 @@ function Navbar() {
             
             {/* Logo */}
             <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('Home')}>
-              <div className="w-10 h-10 bg-blue-600 small-box-shadow rounded-2xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">S</span>
+              <div className="w-8 h-8 bg-blue-600 small-box-shadow rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-md">S</span>
               </div>
-              <span className="self-center text-2xl font-bold tracking-tight text-slate-800">
+              <span className="self-center text-xl font-bold tracking-tight text-slate-800">
                 SIP<span className="text-blue-600">Vision</span>
               </span>
             </div>
@@ -50,7 +50,7 @@ function Navbar() {
             </button>
 
             {/* Nav Items */}
-            <div className={`${isOpen ? 'block' : 'hidden'} w-full md:block md:w-auto mt-4 md:mt-0`}>
+            <div className={`${isOpen ? 'block' : 'hidden'} text-sm w-full md:block md:w-auto mt-4 md:mt-0`}>
               <ul className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0 font-semibold">
                 {menuItems.map((item) => (
                   <li key={item}>
