@@ -4,9 +4,8 @@ import Charts from '../../Utilities/Charts'
 
 function Home() {
   return (
-    <div className='h-[90vh] w-screen flex justify-center items-center'>
-        {/* <DetailsOverview /> */}
-        <Charts />
+    <div className='h-screen w-screen flex justify-center items-center'>
+        <DetailsOverview />
     </div>
   )
 }
