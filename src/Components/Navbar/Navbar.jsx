@@ -79,11 +79,11 @@ function Navbar() {
                   onClick={() => {
                     setActiveTab('Benefits');
                     setIsOpen(false);
-                    navigate('/benefits');
+                    navigate('/services');
                   }}
                   className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === 'Benefits' ? clayActive : clayInactive}`}
                 >
-                  Benefits
+                  Services
                 </button>
               </div>
 

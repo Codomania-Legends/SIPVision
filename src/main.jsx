@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')).render(
                 <Route path="/" element={<Form />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/mfdetails" element={<MFDetails />} />
-                <Route path="/benefits" element={<Benefits />} />
+                <Route path="/services" element={<Benefits />} />
                 <Route path="/user-details" element={<UserDetails />} />
                 <Route path="/investment-apps" element={<InvestmentApps />} />
             </Routes>
