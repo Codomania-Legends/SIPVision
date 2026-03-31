@@ -1,8 +1,13 @@
+import FomoCard from "./Component/FomoCard"
+import Form from "./Component/Form"
 
 function App() {
 
   return (
-    <>Hello</>
+    <>
+      <Form />
+      <FomoCard />
+    </>
   )
 }
 
