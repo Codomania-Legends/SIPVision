@@ -83,11 +83,11 @@ function Navbar() {
               <div className="md:w-auto w-full">
                 <button
                   onClick={() => {
-                    setActiveTab('/benefits');
+                    setActiveTab('/services');
                     setIsOpen(false);
                     navigate('/services');
                   }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/benefits' ? clayActive : clayInactive}`}
+                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/services' ? clayActive : clayInactive}`}
                 >
                   Services
                 </button>
