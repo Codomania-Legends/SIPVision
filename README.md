@@ -1,4 +1,4 @@
-📈 <h1>SIPVision:</h1> 
+<h1>📈 SIPVision:</h1> 
 Smart Investment Goal Planner</br>
 SIPVision is an intuitive tool designed to help investors visualize their wealth creation journey. It provides deep insights into Systematic Investment Plans (SIPs) by factoring in inflation, real returns, and dynamic "what-if" scenarios. 💸✨</br>
 
