@@ -28,8 +28,7 @@ SIPVision is an intuitive tool designed to help investors visualize their wealth
 
 ## 🚀 Live Demo
 
-[![See it in Action](https://img.shields.io/badge/Live_Demo-Watch_Now-00d2ff?style=for-the-badge&logo=vercel)](https://your-sipvision-demo.com) 
-*(Replace with your deployment link)*
+[![See it in Action](https://sip-vision.vercel.app) 
 
 ---
 
@@ -85,7 +84,8 @@ Form
 <img width="1919" height="1029" alt="image" src="https://github.com/user-attachments/assets/9be25bba-b7e6-469a-9973-98c1c75fa79f" /></br>
 
 Visual Graph for SIP Investment
-<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/dc471067-07ed-4eee-8840-8dff66f8a424" /></br>
+<img width="1919" height="867" alt="image" src="https://github.com/user-attachments/assets/a6b529d6-2bf3-4c7a-84a4-8afe8f06ac2a" />
+</br>
 
 Mutual Funds and SIP Details
 <img width="1919" height="1023" alt="image" src="https://github.com/user-attachments/assets/ac787aaf-ceec-4f2f-a0bf-d7f15a7534ff" /></br>
@@ -94,7 +94,9 @@ Services
 <img width="1919" height="1032" alt="image" src="https://github.com/user-attachments/assets/59bfa20b-a083-41f9-8f26-75c11e3b6087" /></br>
 
 User Detail and Vision
-<img width="1919" height="905" alt="image" src="https://github.com/user-attachments/assets/c4e4f151-c04e-49ed-97c1-826ff3971698" /></br>
+<img width="1919" height="868" alt="image" src="https://github.com/user-attachments/assets/bbd7a506-79bb-4ec6-8eeb-3c59769d42e8" />
+
+</br>
 
 Investment Apps
 <img width="1919" height="1027" alt="image" src="https://github.com/user-attachments/assets/94f25ff3-8c4a-4ed3-9e08-94d4ee1c8505" />
