@@ -121,20 +121,6 @@ function Navbar() {
                 </button>
               </div>
 
-              {/* Investment Stocks Item */}
-              <div className="md:w-auto w-full">
-                <button
-                  onClick={() => {
-                    setActiveTab('/stocks');
-                    setIsOpen(false);
-                    navigate('/stocks');
-                  }}
-                  className={`w-full block py-2 px-5 rounded-2xl transition-all ${activeTab === '/stocks' ? clayActive : clayInactive}`}
-                >
-                  Stocks
-                </button>
-              </div>
-
               {/* Investment Apps Item */}
               <div className="md:w-auto w-full">
                 <button
