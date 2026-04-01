@@ -24,21 +24,19 @@ const SipChart = () => {
     const [boostSip, setBoostSip] = useState(0);
     const [boostTime, setBoostTime] = useState(0);
     const [boostReturn, setBoostReturn] = useState(0);
+
+    const [stepUpRate, setStepUpRate] = useState(0);
     
     const [yearlyOverrides, setYearlyOverrides] = useState({});
     const [showYearlyOverrides, setShowYearlyOverrides] = useState(false);
     
-    // Filters open by default
     const [showFilters, setShowFilters] = useState(true);
 
-    // ✨ NEW: Inflation State ✨
     const [showRealValue, setShowRealValue] = useState(false);
-    const inflationRate = 0.06; // Standard 6% inflation
+    const inflationRate = 0.06; 
 
-    // State for Confetti Celebration! 🎉
     const [isCelebrating, setIsCelebrating] = useState(false);
 
-    // Track window dimensions dynamically for Recharts margins and Confetti 📏
     const [windowDimensions, setWindowDimensions] = useState({
         width: typeof window !== 'undefined' ? window.innerWidth : 1200,
         height: typeof window !== 'undefined' ? window.innerHeight : 800,
@@ -59,6 +57,7 @@ const SipChart = () => {
         const baseSip = Number(sipData.monthlyAmount) || 0; 
         const baseYears = Number(sipData.timeHorizon) || 0;   
         const baseReturn = Number(sipData.expectedReturn) || 0; 
+        
         const initialSavings = Number(sipData.currentSavings) || 0;
 
         const optYears = baseYears + boostTime;
@@ -76,7 +75,10 @@ const SipChart = () => {
         const maxYears = Math.max(baseYears, optYears);
 
         for (let year = 1; year <= maxYears; year++) {
-            const activeBaseSip = yearlyOverrides[year] !== undefined ? yearlyOverrides[year] : baseSip;
+
+            const steppedUpBaseSip = baseSip * Math.pow(1 + (stepUpRate / 100), year - 1);
+
+            const activeBaseSip = yearlyOverrides[year] !== undefined ? yearlyOverrides[year] : steppedUpBaseSip;
             const activeOptSip = activeBaseSip + boostSip;
 
             if (year <= baseYears) {
@@ -115,7 +117,7 @@ const SipChart = () => {
         }
 
         return { data, isDifferent };
-    }, [sipData, boostSip, boostTime, boostReturn, yearlyOverrides, showRealValue]); // Added showRealValue to dependency array
+    }, [sipData, boostSip, boostTime, boostReturn, yearlyOverrides, showRealValue, stepUpRate]); // Added showRealValue to dependency array
 
     // ✨ Confetti Logic
     useEffect(() => {
@@ -137,7 +139,8 @@ const SipChart = () => {
         setBoostReturn(0);
         setYearlyOverrides({}); 
         setIsCelebrating(true);
-        setShowRealValue(false); // Reset inflation too
+        setShowRealValue(false); 
+        setStepUpRate(0);
     };
 
     // SHare Feature
@@ -237,6 +240,20 @@ const SipChart = () => {
                                     type="range" min="0" max="20000" step="500" 
                                     value={boostSip} 
                                     onChange={(e) => setBoostSip(Number(e.target.value))}
+                                    className="w-full h-1.5 md:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+
+                            {/* 📈 Annual Salary Step-Up */}
+                            <div className="flex flex-col gap-1 md:gap-2">
+                                <label className="text-xs md:text-sm font-bold text-slate-600 flex justify-between">
+                                    <span>Annual Step-Up 💼</span>
+                                    <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-[10px] md:text-xs">+ {stepUpRate}% / yr</span>
+                                </label>
+                                <input 
+                                    type="range" min="0" max="20" step="1" 
+                                    value={stepUpRate} 
+                                    onChange={(e) => setStepUpRate(Number(e.target.value))}
                                     className="w-full h-1.5 md:h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                                 />
                             </div>
