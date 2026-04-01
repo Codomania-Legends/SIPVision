@@ -9,7 +9,7 @@ const LEARNING_CARDS = [
     id: "mutual-fund",
     title: "The 'Mega Basket'",
     subtitle: "What is a Mutual Fund?",
-    icon: <PieChart className="w-12 h-12 text-blue-500" />,
+    icon: <PieChart className="w-10 h-10 md:w-12 md:h-12 text-blue-500" />,
     gradient: "from-blue-50 to-indigo-50",
     border: "border-blue-200",
     content: [
@@ -23,7 +23,7 @@ const LEARNING_CARDS = [
     id: "what-is-sip",
     title: "Autopilot Investing",
     subtitle: "What is a SIP?",
-    icon: <TrendingUp className="w-12 h-12 text-emerald-500" />,
+    icon: <TrendingUp className="w-10 h-10 md:w-12 md:h-12 text-emerald-500" />,
     gradient: "from-emerald-50 to-teal-50",
     border: "border-emerald-200",
     content: [
@@ -37,7 +37,7 @@ const LEARNING_CARDS = [
     id: "rupee-cost",
     title: "Your Market Shield",
     subtitle: "Rupee Cost Averaging",
-    icon: <ShieldCheck className="w-12 h-12 text-purple-500" />,
+    icon: <ShieldCheck className="w-10 h-10 md:w-12 md:h-12 text-purple-500" />,
     gradient: "from-purple-50 to-fuchsia-50",
     border: "border-purple-200",
     content: [
@@ -51,7 +51,7 @@ const LEARNING_CARDS = [
     id: "compounding",
     title: "The Snowball Effect",
     subtitle: "The Power of Compounding",
-    icon: <Sparkles className="w-12 h-12 text-amber-500" />,
+    icon: <Sparkles className="w-10 h-10 md:w-12 md:h-12 text-amber-500" />,
     gradient: "from-amber-50 to-orange-50",
     border: "border-amber-200",
     content: [
@@ -106,11 +106,13 @@ const SIPVisionDeck = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col min-h-screen justify-center font-sans bg-slate-50">
+    // Added px-4 so it doesn't touch the screen edges on mobile! 📱
+    <div className="max-w-4xl mx-auto mt-5 flex flex-col min-h-screen justify-center px-4 sm:px-6 font-sans bg-slate-50">
 
       {!isCompleted && (
-        <div className="mt-25">
-          <h1 className="text-3xl font-extrabold text-slate-800 text-center mb-6">SIP Knowledge Deck 📚</h1>
+        // Changed mt-25 to standard Tailwind mt-20 md:mt-24 📐
+        <div className="mt-20 md:mt-24">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 text-center mb-6">SIP Knowledge Deck 📚</h1>
           <div className="flex justify-center mb-4 gap-2">
             {LEARNING_CARDS.map((_, idx) => (
               <div
@@ -123,8 +125,8 @@ const SIPVisionDeck = () => {
         </div>
       )}
 
-      {/* 🛠️ FIXED: Removed aspect-[4/5] and h-[500px], replaced with min-height and flex-col */}
-      <div className="relative w-full min-h-[500px] flex flex-col perspective-1000">
+      {/* Dynamic Parent Height: 550px on mobile, 500px on desktop to fit stacked text 📏 */}
+      <div className="relative w-full h-[550px] md:h-[500px] flex flex-col perspective-1000">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           {!isCompleted ? (
             <motion.div
@@ -134,43 +136,42 @@ const SIPVisionDeck = () => {
               initial="enter"
               animate="center"
               exit="exit"
-              className={`absolute medium-box-shadow inset-0 w-full h-[500px] bg-gradient-to-br ${LEARNING_CARDS[currentIndex].gradient} rounded-3xl shadow-xl p-6 md:p-10 flex flex-col`}
+              // Made child h-full so it exactly fills the relative parent container 📦
+              className={`absolute medium-box-shadow inset-0 w-full h-full bg-gradient-to-br ${LEARNING_CARDS[currentIndex].gradient} rounded-3xl shadow-xl p-5 md:p-10 flex flex-col`}
             >
-              <div className="absolute top-6 right-6">
+              <div className="absolute top-4 right-4 md:top-6 md:right-6">
                 <button
                   onClick={() => triggerAIInsight(LEARNING_CARDS[currentIndex].subtitle)}
-                  className="p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-sm hover:shadow-md transition-all text-blue-600 group"
+                  className="p-2 md:p-3 bg-white/80 hover:bg-white backdrop-blur-md rounded-full shadow-sm hover:shadow-md transition-all text-blue-600 group"
                 >
                   <Bot className="w-5 h-5 group-hover:animate-pulse" />
                 </button>
               </div>
 
-              <div className="flex justify-center items-center text-center mb-6 mt-4">
-                <div className="p-4 mr-4 bg-white rounded-2xl shadow-sm mb-4">
+              <div className="flex flex-col md:flex-row justify-center items-center text-center md:text-left mb-4 md:mb-6 mt-6 md:mt-4 gap-2 md:gap-0">
+                <div className="p-3 md:p-4 md:mr-4 bg-white rounded-2xl shadow-sm">
                   {LEARNING_CARDS[currentIndex].icon}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
+                  <h3 className="text-xs md:text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
                     {LEARNING_CARDS[currentIndex].subtitle}
                   </h3>
-                  <h2 className="text-3xl font-black text-slate-800 leading-tight">
+                  <h2 className="text-2xl md:text-3xl font-black text-slate-800 leading-tight">
                     {LEARNING_CARDS[currentIndex].title}
                   </h2>
                 </div>
               </div>
 
-              {/* 🛠️ FIXED: Added flex-grow and reduced bottom margin to prevent pushing content out */}
-              <div className=" overflow-y-auto custom-scrollbar space-y-4 ">
+              <div className="overflow-y-auto custom-scrollbar space-y-3 md:space-y-4 mb-4">
                 {LEARNING_CARDS[currentIndex].content.map((paragraph, idx) => (
-                  <p key={idx} className="text-slate-700 text-lg leading-relaxed font-medium">
+                  <p key={idx} className="text-slate-700 text-base md:text-lg leading-relaxed font-medium">
                     {paragraph}
                   </p>
                 ))}
               </div>
 
-              {/* 🛠️ FIXED: Used mt-auto to ensure it stays at the very bottom of the card */}
-              <div className="mt-6 bg-white/60 backdrop-blur-sm p-5 rounded-xl border border-white/50 shadow-sm">
-                <p className="text-slate-900 font-bold text-sm md:text-base">
+              <div className="mt-auto bg-white/60 backdrop-blur-sm p-4 md:p-5 rounded-xl border border-white/50 shadow-sm">
+                <p className="text-slate-900 font-bold text-xs md:text-base text-center md:text-left">
                   {LEARNING_CARDS[currentIndex].highlight}
                 </p>
               </div>
@@ -181,20 +182,20 @@ const SIPVisionDeck = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ type: "spring", bounce: 0.5 }}
-              className="absolute w-full h-full bg-slate-900 rounded-3xl shadow-2xl p-8 flex flex-col items-center justify-center text-center mb-25 big-box-shadow"
+              className="absolute w-full h-full bg-slate-900 rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center big-box-shadow"
             >
-              <CheckCircle className="w-20 h-20 text-green-400 mb-6" />
-              <h2 className="text-4xl font-black text-white mb-4">You're Ready! 🚀</h2>
-              <p className="text-slate-300 text-lg mb-10 max-w-sm">
+              <CheckCircle className="w-16 h-16 md:w-20 md:h-20 text-green-400 mb-4 md:mb-6" />
+              <h2 className="text-3xl md:text-4xl font-black text-white mb-3 md:mb-4">You're Ready! 🚀</h2>
+              <p className="text-slate-300 text-base md:text-lg mb-8 md:mb-10 max-w-sm">
                 You now understand the core secrets of wealth building. It is time to start your SIP journey.
               </p>
               <button
                 onClick={() => alert("Navigate to Investment Setup!")}
-                className="w-full max-w-xs bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-8 rounded-xl text-lg transition-colors small-box-shadow mb-4"
+                className="w-full max-w-xs bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-xl text-base md:text-lg transition-colors small-box-shadow mb-4"
               >
                 Start Investing Now
               </button>
-              <button onClick={restart} className="text-slate-400 font-semibold hover:text-white transition-colors">
+              <button onClick={restart} className="text-slate-400 font-semibold hover:text-white transition-colors text-sm md:text-base">
                 Read Deck Again
               </button>
             </motion.div>
@@ -203,29 +204,29 @@ const SIPVisionDeck = () => {
       </div>
 
       {!isCompleted && (
-        <div className="flex items-center justify-between mt-8 gap-4">
+        <div className="flex items-center justify-between mt-6 md:mt-8 gap-3 md:gap-4 mb-10 md:mb-20">
           <button
             onClick={prevCard}
             disabled={currentIndex === 0}
-            className={`p-4 rounded-full small-box-shadow mb-10 transition-all ${currentIndex === 0 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-800 shadow-md hover:shadow-lg'
+            className={`p-3 md:p-4 rounded-full small-box-shadow transition-all ${currentIndex === 0 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-white text-slate-800 shadow-md hover:shadow-lg'
               }`}
           >
-            <ArrowLeft className="w-6 h-6" />
+            <ArrowLeft className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
           <button
             onClick={nextCard}
-            className="flex-1 small-box-shadow bg-slate-900 text-white font-bold py-4 px-8 rounded-full flex items-center justify-center gap-2 mb-10 shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all"
+            className="flex-1 small-box-shadow bg-slate-900 text-white font-bold py-3 md:py-4 px-6 md:px-8 rounded-full flex items-center justify-center gap-2 shadow-lg hover:shadow-xl hover:bg-slate-800 transition-all text-sm md:text-base"
           >
             {currentIndex === LEARNING_CARDS.length - 1 ? 'Finish' : 'Next Concept'}
-            <ArrowRight className="w-5 h-5" />
+            <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         </div>
       )}
 
       <style dangerouslySetInnerHTML={{
         __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 10px; }
       `}} />
