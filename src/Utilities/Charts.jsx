@@ -31,6 +31,10 @@ const SipChart = () => {
     // Filters open by default
     const [showFilters, setShowFilters] = useState(true);
 
+    // ✨ NEW: Inflation State ✨
+    const [showRealValue, setShowRealValue] = useState(false);
+    const inflationRate = 0.06; // Standard 6% inflation
+
     // State for Confetti Celebration! 🎉
     const [isCelebrating, setIsCelebrating] = useState(false);
 
@@ -92,16 +96,26 @@ const SipChart = () => {
                 isDifferent = true;
             }
 
+            // ✨ NEW: Apply Inflation Discount if Toggle is ON ✨
+            let finalBaseWealth = baseValue;
+            let finalOptWealth = optValue;
+            
+            if (showRealValue) {
+                 const discountFactor = Math.pow(1 + inflationRate, year);
+                 finalBaseWealth = baseValue / discountFactor;
+                 finalOptWealth = optValue / discountFactor;
+            }
+
             data.push({
                 name: `Year ${year}`,
                 Invested: Math.round(baseInvested),
-                TotalWealth: year <= baseYears ? Math.round(baseValue) : null, 
-                OptimizedWealth: Math.round(optValue), 
+                TotalWealth: year <= baseYears ? Math.round(finalBaseWealth) : null, 
+                OptimizedWealth: Math.round(finalOptWealth), 
             });
         }
 
         return { data, isDifferent };
-    }, [sipData, boostSip, boostTime, boostReturn, yearlyOverrides]);
+    }, [sipData, boostSip, boostTime, boostReturn, yearlyOverrides, showRealValue]); // Added showRealValue to dependency array
 
     // ✨ Confetti Logic
     useEffect(() => {
@@ -123,7 +137,38 @@ const SipChart = () => {
         setBoostReturn(0);
         setYearlyOverrides({}); 
         setIsCelebrating(true);
+        setShowRealValue(false); // Reset inflation too
     };
+
+    // SHare Feature
+    const handleShare = async () => {
+        const finalWealth = chartDataObj.data[chartDataObj.data.length - 1]?.OptimizedWealth || 0;
+        const totalYears = maxYears;
+        const currentSip = (Number(sipData.monthlyAmount) || 0) + boostSip;
+
+        const displayWealth = finalWealth >= 10000000 
+            ? `₹${(finalWealth / 10000000).toFixed(2)} Crore` 
+            : `₹${(finalWealth / 100000).toFixed(2)} Lakhs`;
+
+        const shareText = `🚀 I just mapped out my journey to ${displayWealth} in ${totalYears} years with a monthly SIP of ₹${currentSip.toLocaleString('en-IN')} using SIPVision! 📈💸 \n\nPlan your wealth goals too! 🎯`;
+        const appUrl = window.location.origin;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'My SIPVision Plan 🚀',
+                    text: shareText,
+                    url: appUrl,
+                });
+            } catch (error) {
+                console.log('Share canceled or failed:', error);
+            }
+        } else {
+            const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText + ' \n\n' + appUrl)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    };
+    // SHare Feature
 
     const handleYearlyChange = (year, value) => {
         setYearlyOverrides(prev => ({
@@ -151,7 +196,7 @@ const SipChart = () => {
                 </div>
             )}
 
-            {/* ⚙️ Floating Action Button - Adjusted padding, text size, and positioning for mobile! 👆 */}
+            {/* ⚙️ Floating Action Button */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6 z-30">
                 <button 
                     onClick={() => setShowFilters(!showFilters)}
@@ -161,7 +206,7 @@ const SipChart = () => {
                 </button>
             </div>
 
-            {/* 🎛️ ABSOLUTE Floating Filter Panel - Added calc() width for safe mobile margins! 📐 */}
+            {/* 🎛️ ABSOLUTE Floating Filter Panel */}
             <AnimatePresence>
                 {showFilters && (
                     <motion.div 
@@ -174,7 +219,7 @@ const SipChart = () => {
                             <h4 className="text-base md:text-lg font-black text-slate-800">
                                 Scenario Builder 🚀
                             </h4>
-                            {(boostSip > 0 || boostTime > 0 || boostReturn > 0 || Object.keys(yearlyOverrides).length > 0) && (
+                            {(boostSip > 0 || boostTime > 0 || boostReturn > 0 || Object.keys(yearlyOverrides).length > 0 || showRealValue) && (
                                 <button onClick={resetBoosts} className="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-500 py-1 md:py-1.5 px-2 md:px-3 rounded-lg hover:bg-red-100 transition-colors">
                                     Reset ✖️
                                 </button>
@@ -270,14 +315,31 @@ const SipChart = () => {
                                 )}
                             </AnimatePresence>
                         </div>
+
+                         <div className="border-t border-slate-200 pt-4 md:pt-5 mt-4">
+                            <div className="flex items-center justify-between p-3 bg-red-50 rounded-xl border border-red-100">
+                                <div className="flex flex-col">
+                                    <span className="text-xs md:text-sm font-bold text-slate-800">Inflation Reality 📉</span>
+                                    <span className="text-[10px] text-slate-500">Show real purchasing power</span>
+                                </div>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="sr-only peer"
+                                        checked={showRealValue}
+                                        onChange={() => setShowRealValue(!showRealValue)}
+                                    />
+                                    <div className="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                </label>
+                            </div>
+                        </div>
+
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* 📈 The Big Crystal Clear Chart! - Adjusted padding to reclaim space on mobile 🖼️ */}
             <div className="flex-1 w-full p-2 pt-20 md:p-8 md:pt-24 pb-2 md:pb-4 z-10">
                 <ResponsiveContainer width="100%" height="100%">
-                    {/* Dynamic margins to prevent X/Y axis cutoff on smaller phones! 📲 */}
                     <ComposedChart data={chartDataObj.data} margin={{ top: 20, right: isMobile ? 10 : 30, bottom: 20, left: isMobile ? -10 : 20 }}>
                         <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" vertical={false} />
                         <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: isMobile ? 10 : 13, fontWeight: 600 }} axisLine={false} tickLine={false} dy={10} />
@@ -294,9 +356,8 @@ const SipChart = () => {
                         <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold', fontSize: isMobile ? '11px' : '14px' }} iconType="circle" />
                         
                         <Bar dataKey="Invested" barSize={isMobile ? 20 : 40} fill="#93c5fd" radius={[6, 6, 0, 0]} name="Base Invested" />
-                        <Area type="monotone" dataKey="TotalWealth" fill="url(#colorWealth)" stroke="#3b82f6" strokeWidth={isMobile ? 2 : 4} name="Base Wealth" />
+                        <Area type="monotone" dataKey="TotalWealth" fill="url(#colorWealth)" stroke="#3b82f6" strokeWidth={isMobile ? 2 : 4} name={showRealValue ? "Base Wealth (Real Value)" : "Base Wealth"} />
                         
-                        {/* 💸 THE FOMO LINE */}
                         {chartDataObj.isDifferent && (
                             <Line 
                                 type="monotone" 
@@ -304,7 +365,7 @@ const SipChart = () => {
                                 stroke="#10b981" 
                                 strokeWidth={isMobile ? 2 : 4} 
                                 strokeDasharray="8 8" 
-                                name="If you boost it! 🚀" 
+                                name={showRealValue ? "If you boost it! (Real Value) 🚀" : "If you boost it! 🚀"} 
                                 dot={{ r: isMobile ? 3 : 5, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
                                 activeDot={{ r: isMobile ? 6 : 9, strokeWidth: 0 }}
                             />
@@ -320,10 +381,16 @@ const SipChart = () => {
                 </ResponsiveContainer>
             </div>
 
-            {/* 👇 Download Summary */}
             <div className="flex justify-center pb-2 z-10 relative transform scale-50 md:scale-90 md:left-0 origin-bottom">
                 <SummaryDownloader />
             </div>
+
+            <button 
+                onClick={handleShare}
+                className="flex items-center gap-3 bg-slate-900 border-2 border-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:bg-slate-800 hover:border-slate-700 hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed group justify-center sm:justify-start scale-70 absolute right-0 bottom-0"
+            >
+                Share My Vision 🚀📲
+            </button>
 
         </div>
     );
