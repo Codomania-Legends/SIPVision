@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink, Zap, BarChart3, TrendingUp, BarChart, ShieldCheck } from 'lucide-react';
+import InvestmentInsights from '../../Utilities/AI_Suggestions';
 
 // Images imported from your public folder or assets
 import GrowwLogo from '/groww_logo.png';
@@ -136,6 +137,8 @@ const InvestmentPlatforms = () => {
           </div>
         ))}
       </div>
+
+      <InvestmentInsights />
 
       {/* Advisory Note */}
       <div className="mt-28 max-w-3xl mx-auto text-center border-t border-slate-200 pt-12">

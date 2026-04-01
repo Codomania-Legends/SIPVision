@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDetails } from '../../Utilities/DetailsContext';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
-import { sileo } from 'sileo'; // ✨ Added Sileo import!
+import { sileo } from 'sileo'; 
 
 const GOAL_OPTIONS = [
     { label: "Dream Home 🏠", value: "Home" },
@@ -18,17 +18,32 @@ function Form() {
     const [step, setStep] = useState(0);
     const [direction, setDirection] = useState(0);
 
+    // Calculate the 10-year FOMO value dynamically (Assuming 12% return)
+    const calculateFomo = (weeklySpend) => {
+        if (!weeklySpend) return 0;
+        const monthly = weeklySpend * 4;
+        const i = 0.01; // 12% annual = 1% monthly
+        const n = 120; // 10 years
+        const futureValue = monthly * ((Math.pow(1 + i, n) - 1) / i) * (1 + i);
+        return Math.round(futureValue).toLocaleString('en-IN');
+    };
+
     const nextStep = () => {
-        // ✨ Added Sileo validations and feedback!
         if (step === 0) {
             sileo.info({ title: "Awesome choice! 🎯", description: "Let's set your target amount." });
-        } else if (step === 1) {
+        } else if (step === 1) { // The Number -> Guilt Trip
             if (!sipData.targetAmount) {
                 sileo.error({ title: "Missing Amount! 💰", description: "Please enter your target number." });
                 return;
             }
+            sileo.info({ title: "Got it! ⚡", description: "Let's talk about your habits real quick." });
+        } else if (step === 2) { // Guilt Trip -> The Plan
+             if (sipData.junkFoodSpend === undefined || sipData.junkFoodSpend === "") {
+                sileo.error({ title: "Be honest! 🍕", description: "Enter 0 if you are a saint, but we need a number!" });
+                return;
+            }
             sileo.info({ title: "Big moves! 💸", description: "Let's plan the strategy." });
-        } else if (step === 2) {
+        } else if (step === 3) { // The Plan -> Finish
             if (!sipData.monthlyAmount || !sipData.timeHorizon || !sipData.expectedReturn) {
                 sileo.error({ title: "Missing Details! 📊", description: "Please fill in all the fields." });
                 return; 
@@ -73,12 +88,11 @@ function Form() {
     const handleFinalSubmit = (e) => {
         e.preventDefault();
         
-        // ✨ Wrap the final action in a Sileo promise toast!
         const generationPromise = new Promise((resolve) => {
             setTimeout(() => {
-                setStory(`The user is planning for a ${sipData.goal} with a target of ₹${sipData.targetAmount} over ${sipData.timeHorizon} years.`);
+                setStory(`The user is planning for a ${sipData.goal} with a target of ₹${sipData.targetAmount} over ${sipData.timeHorizon} years, and promised to cut back on junk food!`);
                 resolve();
-            }, 1500); // Faking a small delay for dramatic effect
+            }, 1500); 
         });
 
         sileo.promise(generationPromise, {
@@ -87,7 +101,6 @@ function Form() {
             error: { title: "Oops! 😥", description: "Something went wrong." }
         });
 
-        // Navigate shortly after the success toast appears
         generationPromise.then(() => {
             setTimeout(() => navigate("/home"), 1000);
         });
@@ -99,7 +112,7 @@ function Form() {
                 
                 {/* Custom Progress Bar */}
                 <div className="flex gap-3 mb-10 justify-center items-center">
-                    {[0, 1, 2, 3].map((s) => (
+                    {[0, 1, 2, 3, 4].map((s) => (
                         <motion.div 
                             key={s} 
                             animate={{ 
@@ -157,7 +170,10 @@ function Form() {
                             {/* STEP 1: AMOUNT */}
                             {step === 1 && (
                                 <div className="flex flex-col gap-6">
-                                    <h2 className="text-3xl font-black text-gray-800">The Number. 💰</h2>
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-black text-gray-800">The Number. 💰</h2>
+                                        <p className="text-gray-400 font-medium">How much do you need for your {sipData.goal || 'goal'}?</p>
+                                    </div>
                                     <div className="group relative">
                                         <span className="absolute left-5 top-1/2 -translate-y-1/2 text-3xl font-bold text-blue-600 group-focus-within:scale-125 transition-transform">₹</span>
                                         <input 
@@ -181,14 +197,74 @@ function Form() {
                                 </div>
                             )}
 
-                            {/* STEP 2: STRATEGY */}
-                            {step === 2 && (
+                             {/* STEP 2: FOMO GUILT TRIP (MOVED TO THE MIDDLE) */}
+                             {step === 2 && (
                                 <div className="flex flex-col gap-6">
-                                    <h2 className="text-3xl font-black text-gray-800">The Plan. ⚡</h2>
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-black text-gray-800">The Guilt Trip. 🍕</h2>
+                                        <p className="text-gray-500 font-medium">How much do you spend on Pizza & Fast Food <span className="text-red-500 font-bold">every week?</span> Be honest!</p>
+                                    </div>
+                                    <div className="group relative">
+                                        <span className="absolute left-5 top-1/2 -translate-y-1/2 text-3xl font-bold text-red-500 group-focus-within:scale-125 transition-transform">₹</span>
+                                        <input 
+                                            type="number" 
+                                            autoFocus
+                                            placeholder="500"
+                                            className="w-full pl-14 pr-6 py-6 bg-red-50 border-none rounded-[25px] text-3xl font-black text-red-900 outline-none placeholder:text-red-200 focus:ring-4 ring-red-100 transition-all"
+                                            value={sipData.junkFoodSpend !== undefined ? sipData.junkFoodSpend : ''}
+                                            onChange={(e) => updateData("junkFoodSpend", e.target.value)}
+                                        />
+                                    </div>
+                                    
+                                    <AnimatePresence>
+                                        {sipData.junkFoodSpend > 0 && (
+                                            <motion.div 
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="bg-blue-50 border border-blue-200 p-4 rounded-2xl"
+                                            >
+                                                <p className="text-sm font-bold text-blue-800">
+                                                    🤯 If you added that to your SIP instead, in 10 years it would add <span className="text-xl text-blue-600 block mt-1">₹{calculateFomo(sipData.junkFoodSpend)}!</span>
+                                                </p>
+                                                <p className="text-xs text-blue-600 mt-2 font-medium">Let's skip the pizza and fund your {sipData.goal || 'goal'} faster! 📈</p>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+
+                                    <motion.button 
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        type="button" 
+                                        onClick={() => {
+                                            // Automatically pre-fill the next step with their pizza money!
+                                            if (sipData.junkFoodSpend > 0 && !sipData.monthlyAmount) {
+                                                const pizzaSIP = sipData.junkFoodSpend * 4;
+                                                updateData("monthlyAmount", pizzaSIP.toString());
+                                                sileo.success({title: "Smart Choice! 🧠", description: "Pizza fund added to your Monthly SIP!"});
+                                            }
+                                            nextStep();
+                                        }} 
+                                        className="mt-2 bg-gray-900 text-white py-5 rounded-[25px] font-black text-xl shadow-xl"
+                                    >
+                                        Invest It Instead! 💪
+                                    </motion.button>
+                                </div>
+                            )}
+
+                            {/* STEP 3: STRATEGY (NOW AFTER GUILT TRIP) */}
+                            {step === 3 && (
+                                <div className="flex flex-col gap-6">
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-black text-gray-800">The Plan. ⚡</h2>
+                                        <p className="text-gray-400 font-medium">Let's map out how you hit ₹{Number(sipData.targetAmount).toLocaleString('en-IN')}</p>
+                                    </div>
                                     <div className="space-y-4">
                                         <div className="bg-gray-50 p-5 rounded-[25px] border-2 border-transparent focus-within:border-blue-500 transition-all">
                                             <label className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Monthly Fuel</label>
                                             <input type="number" className="w-full bg-transparent text-2xl font-black outline-none text-gray-800" value={sipData.monthlyAmount || ''} onChange={(e) => updateData("monthlyAmount", e.target.value)} placeholder="5,000" />
+                                            {sipData.junkFoodSpend > 0 && (
+                                                <p className="text-xs text-blue-600 mt-1 font-bold">Includes your saved pizza money! 🍕➡️💸</p>
+                                            )}
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-gray-50 p-5 rounded-[25px]">
@@ -213,8 +289,8 @@ function Form() {
                                 </div>
                             )}
 
-                            {/* STEP 3: FINISH */}
-                            {step === 3 && (
+                            {/* STEP 4: FINISH */}
+                            {step === 4 && (
                                 <div className="flex flex-col gap-6 text-center py-4">
                                     <motion.div 
                                         initial={{ scale: 0 }} 

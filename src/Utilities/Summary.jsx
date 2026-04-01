@@ -137,7 +137,7 @@ function SummaryDownloader() {
             whileTap={{ scale: 0.95 }}
             onClick={generatePDF}
             disabled={isDownloading}
-            className="flex items-center gap-3 bg-slate-900 border-2 border-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:bg-slate-800 hover:border-slate-700 hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed group w-full justify-center sm:justify-start"
+            className="flex items-center gap-3 bg-slate-900 border-2 border-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:bg-slate-800 hover:border-slate-700 hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed group justify-center sm:justify-start scale-70 absolute left-0 bottom-0"
         >
             <div className="p-2 bg-slate-800 text-blue-400 rounded-xl group-hover:bg-slate-700 group-hover:text-blue-300 transition-colors">
                 {isDownloading ? (
@@ -147,8 +147,8 @@ function SummaryDownloader() {
                 )}
             </div>
             <div className="flex flex-col items-start text-left">
-                <span className="text-sm text-slate-400 uppercase tracking-wider font-black text-[10px]">Export Strategy</span>
-                <span className="text-lg">Download Blueprint</span>
+                <span className="text-xs text-slate-400 uppercase tracking-wider font-black text-[10px]">Export Strategy</span>
+                <span className="text-md">Download Blueprint</span>
             </div>
         </motion.button>
     );

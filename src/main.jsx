@@ -16,7 +16,6 @@ import AI from './Utilities/AI'
 import SIPVisionDeck from './Components/MFDetails/MFDetails'
 
 const Layout = ({children}) => {
-    const {story} = useDetails()
     return (
         <>
             <Navbar />

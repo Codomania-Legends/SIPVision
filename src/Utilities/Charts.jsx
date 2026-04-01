@@ -14,6 +14,8 @@ import {
 import { useDetails } from './DetailsContext'; 
 import { Link, useNavigate } from 'react-router'; 
 import SummaryDownloader from '../Utilities/Summary';
+import { motion, AnimatePresence } from 'framer-motion';
+import Confetti from 'react-confetti';
 
 const SipChart = () => {
     const { sipData } = useDetails();
@@ -22,23 +24,22 @@ const SipChart = () => {
     const [boostSip, setBoostSip] = useState(0);
     const [boostTime, setBoostTime] = useState(0);
     const [boostReturn, setBoostReturn] = useState(0);
-    const [showLine, setShowLine] = useState(false);
+    
+    const [yearlyOverrides, setYearlyOverrides] = useState({});
+    const [showYearlyOverrides, setShowYearlyOverrides] = useState(false);
+    
+    // Filters open by default
+    const [showFilters, setShowFilters] = useState(true);
 
-    useEffect(() => {
-        if (boostSip > 0 || boostTime > 0 || boostReturn > 0) {
-            setShowLine(true);
-        } else {
-            setShowLine(false);
-        }
-    }, [boostSip, boostTime, boostReturn]);
+    // State for Confetti Celebration! 🎉
+    const [isCelebrating, setIsCelebrating] = useState(false);
 
-    const chartData = useMemo(() => {
+    const chartDataObj = useMemo(() => {
         const baseSip = Number(sipData.monthlyAmount) || 0; 
         const baseYears = Number(sipData.timeHorizon) || 0;   
         const baseReturn = Number(sipData.expectedReturn) || 0; 
         const initialSavings = Number(sipData.currentSavings) || 0;
 
-        const optSip = baseSip + boostSip;
         const optYears = baseYears + boostTime;
         const optReturn = baseReturn + boostReturn;
 
@@ -49,152 +50,266 @@ const SipChart = () => {
         let baseInvested = initialSavings;
         let baseValue = initialSavings;
         let optValue = initialSavings;
+        let isDifferent = false; 
 
         const maxYears = Math.max(baseYears, optYears);
 
         for (let year = 1; year <= maxYears; year++) {
+            const activeBaseSip = yearlyOverrides[year] !== undefined ? yearlyOverrides[year] : baseSip;
+            const activeOptSip = activeBaseSip + boostSip;
+
             if (year <= baseYears) {
                 for (let month = 1; month <= 12; month++) {
-                baseInvested += baseSip;
-                baseValue = (baseValue + baseSip) * (1 + baseMonthlyRate);
+                    baseInvested += activeBaseSip;
+                    baseValue = (baseValue + activeBaseSip) * (1 + baseMonthlyRate);
                 }
             }
 
             if (year <= optYears) {
                 for (let month = 1; month <= 12; month++) {
-                optValue = (optValue + optSip) * (1 + optMonthlyRate);
+                    optValue = (optValue + activeOptSip) * (1 + optMonthlyRate);
                 }
+            }
+
+            if (Math.round(baseValue) !== Math.round(optValue)) {
+                isDifferent = true;
             }
 
             data.push({
                 name: `Year ${year}`,
                 Invested: Math.round(baseInvested),
                 TotalWealth: year <= baseYears ? Math.round(baseValue) : null, 
-                OptimizedWealth: Math.round(baseValue) == Math.round(optValue) ? 0 : Math.round(optValue), 
+                OptimizedWealth: Math.round(optValue), 
             });
         }
 
-        return data;
-    }, [sipData, boostSip, boostTime, boostReturn]);
+        return { data, isDifferent };
+    }, [sipData, boostSip, boostTime, boostReturn, yearlyOverrides]);
+
+    // ✨ Confetti Logic: Watch if they hit their dream target!
+    useEffect(() => {
+        const targetAmount = Number(sipData.targetAmount) || Infinity;
+        const finalWealth = chartDataObj.data[chartDataObj.data.length - 1]?.OptimizedWealth || 0;
+
+        // Trigger confetti if optimized wealth crosses target AND they actually made adjustments
+        if (finalWealth >= targetAmount && chartDataObj.isDifferent) {
+            setIsCelebrating(true);
+            
+            // Turn it off after 5 seconds
+            const timer = setTimeout(() => setIsCelebrating(false), 5000);
+            return () => clearTimeout(timer);
+        } else {
+            setIsCelebrating(false);
+        }
+    }, [chartDataObj, sipData.targetAmount]);
 
     const resetBoosts = () => {
         setBoostSip(0);
         setBoostTime(0);
         setBoostReturn(0);
+        setYearlyOverrides({}); 
+        setIsCelebrating(true);
     };
 
+    const handleYearlyChange = (year, value) => {
+        setYearlyOverrides(prev => ({
+            ...prev,
+            [year]: Number(value)
+        }));
+    };
+
+    const maxYears = Math.max(Number(sipData.timeHorizon) || 0, (Number(sipData.timeHorizon) || 0) + boostTime);
+
+    // Secure window dimensions for Confetti
+    const windowWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+    const windowHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+
     return (
-        <div className="w-full h-8/10 flex flex-col items-center bg-white p-6 rounded-2xl shadow-lg border border-gray-100 relative">
+        <div className="w-full h-[85vh] min-h-[600px] flex flex-col bg-white rounded-3xl shadow-xl border border-gray-100 relative overflow-hidden">
             
-            {/* 🎛️ What If Scenario Builder - Now with Sliders! */}
-            <div className="w-full bg-blue-50/50 p-5 rounded-xl border border-blue-100 mb-6">
-                <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-base font-bold text-blue-900 flex items-center gap-2">
-                        🚀 "What If?" Scenario Builder
-                    </h4>
-                    {(boostSip > 0 || boostTime > 0 || boostReturn > 0) && (
-                        <button onClick={resetBoosts} className="text-xs bg-white border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-700 font-medium py-1 px-3 rounded-lg transition-colors shadow-sm">
-                            Reset Filters ✖️
-                        </button>
-                    )}
+            {/* ✨ Confetti Component! */}
+            {isCelebrating && (
+                <div className="absolute inset-0 pointer-events-none z-50">
+                    <Confetti 
+                        width={windowWidth} 
+                        height={windowHeight} 
+                        recycle={false} 
+                        numberOfPieces={600} 
+                        gravity={0.15}
+                    />
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* 💰 SIP Boost Slider */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
-                            <span>Extra SIP 💰</span>
-                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ ₹{boostSip.toLocaleString('en-IN')}</span>
-                        </label>
-                        <input 
-                            type="range" 
-                            min="0" 
-                            max="20000" 
-                            step="500" 
-                            value={boostSip} 
-                            onChange={(e) => setBoostSip(Number(e.target.value))}
-                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                        />
-                    </div>
+            )}
 
-                    {/* ⏳ Time Boost Slider */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
-                            <span>Extra Time ⏳</span>
-                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ {boostTime} Yrs</span>
-                        </label>
-                        <input 
-                            type="range" 
-                            min="0" 
-                            max="15" 
-                            step="1" 
-                            value={boostTime} 
-                            onChange={(e) => setBoostTime(Number(e.target.value))}
-                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                        />
-                    </div>
-
-                    {/* 📈 Return Boost Slider */}
-                    <div className="flex flex-col gap-2">
-                        <label className="text-sm font-semibold text-blue-800 flex justify-between">
-                            <span>Extra Return 📈</span>
-                            <span className="text-blue-600 bg-blue-100 px-2 py-0.5 rounded text-xs">+ {boostReturn}%</span>
-                        </label>
-                        <input 
-                            type="range" 
-                            min="0" 
-                            max="10" 
-                            step="0.5" 
-                            value={boostReturn} 
-                            onChange={(e) => setBoostReturn(Number(e.target.value))}
-                            className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
-                        />
-                    </div>
-                </div>
+            {/* ⚙️ Floating Action Button to toggle filters */}
+            <div className="absolute top-6 right-6 z-30">
+                <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-2xl font-bold shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all"
+                >
+                    {showFilters ? "Close Filters ✖️" : "Adjust Strategy 🎛️"}
+                </button>
             </div>
 
-            <h3 className="text-xl font-bold text-gray-800 mb-2">
-                Wealth Projection vs. Potential 📈
-            </h3>
-            
-            <div style={{ width: '100%', height: 400 }}>
-                <ResponsiveContainer>
-                <ComposedChart data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                    <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
-                    <XAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 12 }} />
-                    <YAxis 
-                    tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`} 
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
-                    />
-                    <Tooltip 
-                    formatter={(value) => `₹ ${value.toLocaleString('en-IN')}`}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
-                    />
-                    <Legend wrapperStyle={{ paddingTop: '20px' }}/>
-                    
-                    {/* 🛡️ 1st Line: The base invested amount (Safe Money) */}
-                    <Bar dataKey="Invested" barSize={30} fill="#93c5fd" radius={[4, 4, 0, 0]} name="Base Invested" />
-                    
-                    {/* 📊 2nd Line: The base total wealth (Current Plan) */}
-                    <Area type="monotone" dataKey="TotalWealth" fill="#dbeafe" stroke="#3b82f6" strokeWidth={3} name="Base Wealth" />
-                    
-                    {/* 💸 3rd Line: THE FOMO LINE! (Optimized Potential) */}
-                    {showLine && <Line 
-                        type="monotone" 
-                        dataKey="OptimizedWealth" 
-                        stroke="#10b981" 
-                        strokeWidth={4} 
-                        strokeDasharray="5 5" 
-                        name="If you boost it! 🚀" 
-                        dot={{ r: 4, fill: '#10b981' }}
-                        activeDot={{ r: 8 }}
-                    />}
-                </ComposedChart>
+            {/* 🎛️ ABSOLUTE Floating Filter Panel */}
+            <AnimatePresence>
+                {showFilters && (
+                    <motion.div 
+                        initial={{ opacity: 0, x: 50, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: 50, scale: 0.95 }}
+                        className="absolute top-24 right-6 z-20 w-[360px] max-h-[65vh] overflow-y-auto scrollbar-hide bg-white/90 backdrop-blur-xl p-6 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-white"
+                    >
+                        <div className="flex justify-between items-center mb-6">
+                            <h4 className="text-lg font-black text-slate-800">
+                                Scenario Builder 🚀
+                            </h4>
+                            {(boostSip > 0 || boostTime > 0 || boostReturn > 0 || Object.keys(yearlyOverrides).length > 0) && (
+                                <button onClick={resetBoosts} className="text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-500 py-1.5 px-3 rounded-lg hover:bg-red-100 transition-colors">
+                                    Reset ✖️
+                                </button>
+                            )}
+                        </div>
+                        
+                        <div className="flex flex-col gap-6 mb-6">
+                            {/* 💰 SIP Boost */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-600 flex justify-between">
+                                    <span>Extra SIP 💰</span>
+                                    <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-xs">+ ₹{boostSip.toLocaleString('en-IN')}</span>
+                                </label>
+                                <input 
+                                    type="range" min="0" max="20000" step="500" 
+                                    value={boostSip} 
+                                    onChange={(e) => setBoostSip(Number(e.target.value))}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+
+                            {/* ⏳ Time Boost */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-600 flex justify-between">
+                                    <span>Extra Time ⏳</span>
+                                    <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-xs">+ {boostTime} Yrs</span>
+                                </label>
+                                <input 
+                                    type="range" min="0" max="15" step="1" 
+                                    value={boostTime} 
+                                    onChange={(e) => setBoostTime(Number(e.target.value))}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+
+                            {/* 📈 Return Boost */}
+                            <div className="flex flex-col gap-2">
+                                <label className="text-sm font-bold text-slate-600 flex justify-between">
+                                    <span>Extra Return 📈</span>
+                                    <span className="text-blue-600 bg-blue-50 px-2 py-0.5 rounded text-xs">+ {boostReturn}%</span>
+                                </label>
+                                <input 
+                                    type="range" min="0" max="10" step="0.5" 
+                                    value={boostReturn} 
+                                    onChange={(e) => setBoostReturn(Number(e.target.value))}
+                                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                                />
+                            </div>
+                        </div>
+
+                        {/* 📅 Yearly Roadmap */}
+                        <div className="border-t border-slate-200 pt-5 mt-2">
+                            <button 
+                                onClick={() => setShowYearlyOverrides(!showYearlyOverrides)}
+                                className="text-sm font-bold text-slate-700 flex items-center justify-between w-full hover:text-blue-600 transition-colors"
+                            >
+                                <span>Custom Yearly Plan 📅</span>
+                                <span>{showYearlyOverrides ? '➖' : '➕'}</span>
+                            </button>
+                            
+                            <AnimatePresence>
+                                {showYearlyOverrides && (
+                                    <motion.div 
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        exit={{ height: 0, opacity: 0 }}
+                                        className="flex flex-col gap-3 overflow-hidden pt-4"
+                                    >
+                                        {Array.from({ length: maxYears }).map((_, i) => {
+                                            const yearNumber = i + 1;
+                                            const defaultSip = Number(sipData.monthlyAmount) || 0;
+                                            const currentSip = yearlyOverrides[yearNumber] !== undefined ? yearlyOverrides[yearNumber] : defaultSip;
+                                            const isModified = yearlyOverrides[yearNumber] !== undefined;
+
+                                            return (
+                                                <div key={yearNumber} className={`flex justify-between items-center p-3 rounded-xl border ${isModified ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-100'} transition-all`}>
+                                                    <label className={`text-xs font-bold ${isModified ? 'text-blue-700' : 'text-slate-500'}`}>
+                                                        Year {yearNumber}
+                                                    </label>
+                                                    <div className="relative w-32">
+                                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">₹</span>
+                                                        <input 
+                                                            type="number"
+                                                            value={currentSip || ''}
+                                                            onChange={(e) => handleYearlyChange(yearNumber, e.target.value)}
+                                                            className={`w-full pl-7 pr-3 py-1.5 rounded-lg text-sm font-bold outline-none border border-slate-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all ${isModified ? 'text-blue-700' : 'text-slate-700'}`}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* 📈 The Big Crystal Clear Chart! */}
+            <div className="flex-1 w-full p-8 pt-24 pb-4 z-10">
+                <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart data={chartDataObj.data} margin={{ top: 20, right: 30, bottom: 20, left: 20 }}>
+                        <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" vertical={false} />
+                        <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 13, fontWeight: 600 }} axisLine={false} tickLine={false} dy={10} />
+                        <YAxis 
+                            tickFormatter={(value) => `₹${(value / 100000).toFixed(1)}L`} 
+                            tick={{ fill: '#94a3b8', fontSize: 13, fontWeight: 600 }}
+                            axisLine={false} tickLine={false} dx={-10}
+                        />
+                        <Tooltip 
+                            formatter={(value) => `₹ ${value.toLocaleString('en-IN')}`}
+                            contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', fontWeight: 'bold' }}
+                            itemStyle={{ padding: '4px 0' }}
+                        />
+                        <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 'bold' }} iconType="circle" />
+                        
+                        <Bar dataKey="Invested" barSize={40} fill="#93c5fd" radius={[6, 6, 0, 0]} name="Base Invested" />
+                        <Area type="monotone" dataKey="TotalWealth" fill="url(#colorWealth)" stroke="#3b82f6" strokeWidth={4} name="Base Wealth" />
+                        
+                        {/* 💸 THE FOMO LINE */}
+                        {chartDataObj.isDifferent && (
+                            <Line 
+                                type="monotone" 
+                                dataKey="OptimizedWealth" 
+                                stroke="#10b981" 
+                                strokeWidth={4} 
+                                strokeDasharray="8 8" 
+                                name="If you boost it! 🚀" 
+                                dot={{ r: 5, fill: '#10b981', strokeWidth: 2, stroke: '#fff' }}
+                                activeDot={{ r: 9, strokeWidth: 0 }}
+                            />
+                        )}
+
+                        <defs>
+                            <linearGradient id="colorWealth" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                            </linearGradient>
+                        </defs>
+                    </ComposedChart>
                 </ResponsiveContainer>
-            <button onClick={() => navigate("/user-details")} className='bg-blue-500 absolute right-0 bottom-0 text-white px-4 py-2 rounded-lg small-box-shadow'>Your Details</button>
             </div>
 
-            <div className="flex justify-center mt-6">
+            {/* 👇 Download Summary is back where it belongs! */}
+            <div className="flex justify-center pb-6 z-10 relative">
                 <SummaryDownloader />
             </div>
 
