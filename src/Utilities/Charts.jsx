@@ -387,7 +387,7 @@ const SipChart = () => {
 
             <button 
                 onClick={handleShare}
-                className="flex items-center gap-3 bg-slate-900 border-2 border-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:bg-slate-800 hover:border-slate-700 hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed group justify-center sm:justify-start scale-70 absolute right-0 bottom-0"
+                className="flex items-center gap-3 bg-slate-900 border-2 border-slate-800 text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:bg-slate-800 hover:border-slate-700 hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed group justify-center sm:justify-start absolute right-0 bottom-0 z-50 scale-50 md:scale-90 "
             >
                 Share My Vision 🚀📲
             </button>
